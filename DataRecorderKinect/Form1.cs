@@ -49,6 +49,7 @@ namespace DataRecorderKinect
         public string[] AllRawColorImagePath;
         public KinectConversion ConverterKinectData = new KinectConversion();
         public bool Livestream = false;
+		public int totalNumberPicture = 0;
 
 		public ushort[] CutDepthDataOffline = new ushort[424 * 512];
 		public List<System.Drawing.Point> XYPlaneRotationArea = new List<System.Drawing.Point>();
@@ -77,9 +78,13 @@ namespace DataRecorderKinect
 		byte[] RawColorImageData = new byte[1920 * 1080 * 4];
 		byte[] RawShortInfraredData2 = new byte[512 * 424];
 
+		public Microsoft.Kinect.PointF[] MappingMatrixDepthToSpace = new Microsoft.Kinect.PointF[512 * 424];
+		public Microsoft.Kinect.PointF[] MappingMatrixDepthToSpaceForUse = new Microsoft.Kinect.PointF[512 * 424];
+
 		public CameraSpacePoint OrigoOfPlane = new CameraSpacePoint();
 		public CameraSpacePoint XDirectionOfOrigo = new CameraSpacePoint();
 		int countImage = 0;
+		public int testvar = 0;
 
 		public Form1()
         {
@@ -90,10 +95,33 @@ namespace DataRecorderKinect
 
             myKinect = new Kinect2Handler((int)600, (int)2000);
 
-            UpdateUI();
+			MappingMatrixDepthToSpace.CopyTo(MappingMatrixDepthToSpaceForUse, 0);
+
+			System.Timers.Timer timer = new System.Timers.Timer(10000);
+			timer.AutoReset = true; // the key is here so it repeats
+			timer.Elapsed += UpdateKinectMatrix;
+			timer.Start();
+
+			UpdateUI();
+
         }
 
-        private void UpdateUI()
+		void UpdateKinectMatrix(object sender, EventArgs e)
+		{
+			try
+			{
+				if (myKinect.kinectSensor.IsAvailable)
+				{
+					MappingMatrixDepthToSpace = myKinect.coordinateMapper.GetDepthFrameToCameraSpaceTable();
+					var test = myKinect.coordinateMapper.GetDepthCameraIntrinsics();
+					MappingMatrixDepthToSpace.CopyTo(MappingMatrixDepthToSpaceForUse, 0);
+					data_handler.save_variable(x => MappingMatrixDepthToSpace);
+				}
+			}
+			catch { }
+		}
+
+		private void UpdateUI()
         {
             textBoxMinDepth.Text = MinDepth.ToString();
             textBoxMaxDepth.Text = MaxDepth.ToString();
@@ -109,7 +137,9 @@ namespace DataRecorderKinect
                 CalibrationImage = new Bitmap(pictureBoxTriggerImage.Image);
                 pictureBoxTriggerImage.Image = DrawingEngine.draw_workarea(TriggerArea, CalibrationImage);
             }
-        }
+
+			initImageCount();
+		}
 
         public bool IsNullOrEmpty(Array array)
         {
@@ -371,10 +401,41 @@ namespace DataRecorderKinect
 				data_handler.SaveObjectAsNewFile(x => StillRGBImage);
 				data_handler.SaveObjectAsNewFile(x => CutIRStillData);
 
-				Displayer.DisplayImages(ref pictureBoxStillDepthImage, StillDepthImage);
-				Displayer.DisplayImages(ref pictureBoxStillIRImage, StillIrImage);
-				pictureBoxStillRGBImage.Image = Displayer.GetPictureFromData(1920, 1080, StillRGBImage);
-				pictureBoxStillRGBImage.SizeMode = PictureBoxSizeMode.StretchImage;
+				if (radioButton1.Checked)
+				{
+					Displayer.DisplayImages(ref pictureBoxStillDepthImage, ConverterKinectData.ConvertDepthUshortToImageByte(CutDepthStillData, (int)MinDepth, (int)MaxDepth));
+					//	Displayer.DisplayImages(ref pictureBoxStillDepthImage, StillDepthImage);
+					Displayer.DisplayImages(ref pictureBoxStillIRImage, StillIrImage);
+					pictureBoxStillRGBImage.Image = Displayer.GetPictureFromData(1920, 1080, StillRGBImage);
+					pictureBoxStillRGBImage.SizeMode = PictureBoxSizeMode.StretchImage;
+				}
+
+				totalNumberPicture++;
+
+				if (radioButton1.Checked)
+				{
+					hScrollBar1.Value = totalNumberPicture;
+					textBoxPictureNumber.Text = hScrollBar1.Value.ToString();
+				}
+
+				string default_folder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
+
+				string pathCutStillData = default_folder + "\\CutDepthStillData";
+				string pathIRData = default_folder + "\\CutIRStillData";
+				string pathColorData = default_folder + "\\StillRGBImage";
+
+				AllCutDepthStillImagePath = System.IO.Directory.GetFiles(pathCutStillData, "C*");
+				AllRawIRStillImagePath = System.IO.Directory.GetFiles(pathIRData, "C*");
+				AllRawColorImagePath = System.IO.Directory.GetFiles(pathColorData, "S*");
+
+				Array.Sort(AllCutDepthStillImagePath, new AlphanumComparatorFast());
+				Array.Sort(AllRawIRStillImagePath, new AlphanumComparatorFast());
+				Array.Sort(AllRawColorImagePath, new AlphanumComparatorFast());
+
+				hScrollBar1.Minimum = 1;
+				hScrollBar1.Maximum = AllCutDepthStillImagePath.Count() + 9;
+
+
 			}
 		}
 
@@ -383,7 +444,63 @@ namespace DataRecorderKinect
 
         }
 
-        private async void radioButton2_CheckedChanged(object sender, EventArgs e)
+		void initImageCount()
+		{
+			try
+			{
+				string default_folder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
+
+				string pathCutStillData = default_folder + "\\CutDepthStillData";
+				string pathIRData = default_folder + "\\CutIRStillData";
+				string pathColorData = default_folder + "\\StillRGBImage";
+
+				AllCutDepthStillImagePath = System.IO.Directory.GetFiles(pathCutStillData, "C*");
+				AllRawIRStillImagePath = System.IO.Directory.GetFiles(pathIRData, "C*");
+				AllRawColorImagePath = System.IO.Directory.GetFiles(pathColorData, "S*");
+
+				Array.Sort(AllCutDepthStillImagePath, new AlphanumComparatorFast());
+				Array.Sort(AllRawIRStillImagePath, new AlphanumComparatorFast());
+				Array.Sort(AllRawColorImagePath, new AlphanumComparatorFast());
+
+				hScrollBar1.Minimum = 1;
+				hScrollBar1.Maximum = AllCutDepthStillImagePath.Count() + 9;
+				hScrollBar1.Value = AllCutDepthStillImagePath.Count();
+
+				System.IO.Stream stream = File.Open(AllRawIRStillImagePath[hScrollBar1.Value - 1], FileMode.Open);
+				var binaryFormatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+				var bla = (ushort[])binaryFormatter.Deserialize(stream);
+				RawShortInfraredData2 = ConverterKinectData.ConvertIRUshortToImageByte(bla);
+				Displayer.DisplayImages(ref pictureBoxStillIRImage, RawShortInfraredData2);
+				stream.Dispose();
+				stream = null;
+
+				stream = File.Open(AllCutDepthStillImagePath[hScrollBar1.Value - 1], FileMode.Open);
+				binaryFormatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+				CutDepthStillData = (ushort[])binaryFormatter.Deserialize(stream);
+				Displayer.DisplayImages(ref pictureBoxStillDepthImage, ConverterKinectData.ConvertDepthUshortToImageByte(CutDepthStillData, (int)MinDepth, (int)MaxDepth));
+				stream.Dispose();
+				stream = null;
+
+				stream = File.Open(AllRawColorImagePath[hScrollBar1.Value - 1], FileMode.Open);
+				binaryFormatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+				RawColorImageData = (byte[])binaryFormatter.Deserialize(stream);
+				Displayer.DisplayImagesRGB(ref pictureBoxStillRGBImage, RawColorImageData, 1920, 1080);
+				pictureBoxStillRGBImage.SizeMode = PictureBoxSizeMode.StretchImage;
+				stream.Dispose();
+				stream = null;
+
+			}
+			catch
+			{
+				hScrollBar1.Value = 0;
+			}
+
+			totalNumberPicture = hScrollBar1.Value;
+			textBoxPictureNumber.Text = hScrollBar1.Value.ToString();
+
+		}
+
+		private async void radioButton2_CheckedChanged(object sender, EventArgs e)
         {
             //LiveStreamOpen = false;
             //while(Livestream) await Task.Run(() => waitDelay(10));
