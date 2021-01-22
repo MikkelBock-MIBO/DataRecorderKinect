@@ -63,6 +63,9 @@
 			this.pictureBoxZRotation = new System.Windows.Forms.PictureBox();
 			this.pictureBoxCalibration = new System.Windows.Forms.PictureBox();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
+			this.buttonCurrentRGB = new System.Windows.Forms.Button();
+			this.buttonCurrentDepth = new System.Windows.Forms.Button();
+			this.buttonCurrentIRImage = new System.Windows.Forms.Button();
 			this.buttonSaveRGBasPng = new System.Windows.Forms.Button();
 			this.buttonSaveIRAsPng = new System.Windows.Forms.Button();
 			this.label6 = new System.Windows.Forms.Label();
@@ -80,9 +83,6 @@
 			this.pictureBoxStillRGBImage = new System.Windows.Forms.PictureBox();
 			this.pictureBoxStillIRImage = new System.Windows.Forms.PictureBox();
 			this.pictureBoxStillDepthImage = new System.Windows.Forms.PictureBox();
-			this.buttonCurrentIRImage = new System.Windows.Forms.Button();
-			this.buttonCurrentDepth = new System.Windows.Forms.Button();
-			this.buttonCurrentRGB = new System.Windows.Forms.Button();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBoxRGB)).BeginInit();
@@ -314,7 +314,7 @@
 			this.buttonUseMeatArea.Name = "buttonUseMeatArea";
 			this.buttonUseMeatArea.Size = new System.Drawing.Size(125, 23);
 			this.buttonUseMeatArea.TabIndex = 49;
-			this.buttonUseMeatArea.Text = "Use Meat Area";
+			this.buttonUseMeatArea.Text = "Use trigger area";
 			this.buttonUseMeatArea.UseVisualStyleBackColor = true;
 			this.buttonUseMeatArea.Click += new System.EventHandler(this.buttonUseMeatArea_Click);
 			// 
@@ -477,6 +477,36 @@
 			this.tabPage3.UseVisualStyleBackColor = true;
 			this.tabPage3.Click += new System.EventHandler(this.tabPage3_Click);
 			// 
+			// buttonCurrentRGB
+			// 
+			this.buttonCurrentRGB.Location = new System.Drawing.Point(1234, 172);
+			this.buttonCurrentRGB.Name = "buttonCurrentRGB";
+			this.buttonCurrentRGB.Size = new System.Drawing.Size(163, 23);
+			this.buttonCurrentRGB.TabIndex = 25;
+			this.buttonCurrentRGB.Text = "Save current RGB as png";
+			this.buttonCurrentRGB.UseVisualStyleBackColor = true;
+			this.buttonCurrentRGB.Click += new System.EventHandler(this.buttonCurrentRGB_Click);
+			// 
+			// buttonCurrentDepth
+			// 
+			this.buttonCurrentDepth.Location = new System.Drawing.Point(1234, 143);
+			this.buttonCurrentDepth.Name = "buttonCurrentDepth";
+			this.buttonCurrentDepth.Size = new System.Drawing.Size(163, 23);
+			this.buttonCurrentDepth.TabIndex = 24;
+			this.buttonCurrentDepth.Text = "Save current depth as png";
+			this.buttonCurrentDepth.UseVisualStyleBackColor = true;
+			this.buttonCurrentDepth.Click += new System.EventHandler(this.buttonCurrentDepth_Click);
+			// 
+			// buttonCurrentIRImage
+			// 
+			this.buttonCurrentIRImage.Location = new System.Drawing.Point(1234, 114);
+			this.buttonCurrentIRImage.Name = "buttonCurrentIRImage";
+			this.buttonCurrentIRImage.Size = new System.Drawing.Size(163, 23);
+			this.buttonCurrentIRImage.TabIndex = 23;
+			this.buttonCurrentIRImage.Text = "Save current IR as png";
+			this.buttonCurrentIRImage.UseVisualStyleBackColor = true;
+			this.buttonCurrentIRImage.Click += new System.EventHandler(this.buttonCurrentIRImage_Click);
+			// 
 			// buttonSaveRGBasPng
 			// 
 			this.buttonSaveRGBasPng.Location = new System.Drawing.Point(1234, 247);
@@ -633,36 +663,6 @@
 			this.pictureBoxStillDepthImage.TabIndex = 6;
 			this.pictureBoxStillDepthImage.TabStop = false;
 			this.pictureBoxStillDepthImage.Click += new System.EventHandler(this.pictureBoxStillDepthImage_Click);
-			// 
-			// buttonCurrentIRImage
-			// 
-			this.buttonCurrentIRImage.Location = new System.Drawing.Point(1234, 114);
-			this.buttonCurrentIRImage.Name = "buttonCurrentIRImage";
-			this.buttonCurrentIRImage.Size = new System.Drawing.Size(163, 23);
-			this.buttonCurrentIRImage.TabIndex = 23;
-			this.buttonCurrentIRImage.Text = "Save current IR as png";
-			this.buttonCurrentIRImage.UseVisualStyleBackColor = true;
-			this.buttonCurrentIRImage.Click += new System.EventHandler(this.buttonCurrentIRImage_Click);
-			// 
-			// buttonCurrentDepth
-			// 
-			this.buttonCurrentDepth.Location = new System.Drawing.Point(1234, 143);
-			this.buttonCurrentDepth.Name = "buttonCurrentDepth";
-			this.buttonCurrentDepth.Size = new System.Drawing.Size(163, 23);
-			this.buttonCurrentDepth.TabIndex = 24;
-			this.buttonCurrentDepth.Text = "Save current depth as png";
-			this.buttonCurrentDepth.UseVisualStyleBackColor = true;
-			this.buttonCurrentDepth.Click += new System.EventHandler(this.buttonCurrentDepth_Click);
-			// 
-			// buttonCurrentRGB
-			// 
-			this.buttonCurrentRGB.Location = new System.Drawing.Point(1234, 172);
-			this.buttonCurrentRGB.Name = "buttonCurrentRGB";
-			this.buttonCurrentRGB.Size = new System.Drawing.Size(163, 23);
-			this.buttonCurrentRGB.TabIndex = 25;
-			this.buttonCurrentRGB.Text = "Save current RGB as png";
-			this.buttonCurrentRGB.UseVisualStyleBackColor = true;
-			this.buttonCurrentRGB.Click += new System.EventHandler(this.buttonCurrentRGB_Click);
 			// 
 			// Form1
 			// 
